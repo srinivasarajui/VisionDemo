@@ -44,9 +44,9 @@ def main():
     cap = cv2.VideoCapture(0)
     print("Capturing Image at {} x {} size".format(cap.get(3),cap.get(4)))
     
-    webcam.set(CV_CAP_PROP_FOURCC ,CV_FOURCC('M', 'J', 'P', 'G') );
-    webcam.set(CV_CAP_PROP_FRAME_WIDTH ,1280);
-    webcam.set(CV_CAP_PROP_FRAME_HEIGHT ,960);
+    cap.set(cv2.CAP_PROP_FOURCC ,cv2.VideoWriter_fourcc('M', 'J', 'P', 'G') );
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH ,1280);
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT ,960);
     
     lastPersons = []
     while(True): 
