@@ -25,11 +25,11 @@ while(True):
 
     
     overlay = cv2.flip(frame.copy(),1)
-    output = cv2.flip(frame.copy(),1)
+    
     cv2.rectangle(overlay,(50,50),(350,250),(0,0,0),-1)
     cv2.putText(overlay, 'ZenLabs',(75,75),cv2.FONT_HERSHEY_COMPLEX_SMALL,.7,(255,255,255))
     cv2.putText(overlay, str(datetime.now()),(75,100),cv2.FONT_HERSHEY_COMPLEX_SMALL,.7,(255,255,255))
-    gray = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2GRAY)
+    
     if 'd' == chr(c & 255):
         cv2.putText(overlay, 'Person detection in Progress',(75,125),cv2.FONT_HERSHEY_COMPLEX_SMALL,.7,(255,255,255))
     else:
@@ -39,13 +39,14 @@ while(True):
     for item in lastPersons:
         cv2.putText(overlay, item,(75,175+lc),cv2.FONT_HERSHEY_COMPLEX_SMALL,.7,(255,255,255))
         lc = lc +25     
+    output = cv2.flip(frame.copy(),1)
+    gray = cv2.cvtColor(output.copy(), cv2.COLOR_BGR2GRAY)    
     faces = faceCascade.detectMultiScale(
             gray,
             scaleFactor=1.3,
             minNeighbors=5,
             minSize=(30, 30)
         )
-    #print(faces)
         # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
             cv2.rectangle(overlay, (x, y), (x+w, y+h), (0, 255, 0), 2)
@@ -53,7 +54,6 @@ while(True):
             
     cv2.addWeighted(overlay, 0.5, output, 0.5,0, output)
     # Our operations on the frame come here
-    #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     #r = 1000/output.shape[1]
     #dim = (1000,int(r*output.shape[0]))
     #resized_img = cv2.resize(output,dim,interpolation = cv2.INTER_AREA)
@@ -80,12 +80,15 @@ while(True):
                     maxItem=stats[m]
                     maxEmo=m
             dict[item['faceId']] = maxEmo;
-        result = CF.face.identify(list,'usergroup')
-        for item in result :
-            for inner in item['candidates']:
-                print(item)
-                result = CF.person.get('usergroup', inner['personId'])
-                lastPersons.append("{} - {} ".format(result['name'],dict[item['faceId']]) )
+        if len(list) > 0:
+            result = CF.face.identify(list,'usergroup')
+            for item in result :
+                for inner in item['candidates']:
+                    print(item)
+                    result = CF.person.get('usergroup', inner['personId'])
+                    lastPersons.append("{} is {} emotion".format(result['name'],dict[item['faceId']]) )
+        else :
+            lastPersons.append("No Faces Found!!!" )
 # When everything done, release the capture
 cap.release()
 cv2.destroyAllWindows()
